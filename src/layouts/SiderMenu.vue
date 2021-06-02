@@ -38,6 +38,7 @@ export default {
       //根据点击的路由信息，获取选中的菜单项和打开的菜单项
       this.selectedKeys = this.selectedKeysMap[val];
       this.openKeys = this.collapsed ? [] : this.openKeysMap[val];
+      this.$emit("openKeysChange", this.openKeys);
     },
   },
   data() {

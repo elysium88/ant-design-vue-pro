@@ -10,14 +10,19 @@
         width="256"
       >
         <div class="logo">Ant Design Vue Pro</div>
-        <SiderMenu :theme="navTheme" />
+        <SiderMenu
+          ref="siderMenu"
+          :theme="navTheme"
+          :collapsed="collapsed"
+          @openKeysChange="openKeysChange"
+        />
       </a-layout-sider>
       <a-layout>
         <a-layout-header style="background: #fff; padding: 0">
           <a-icon
             class="trigger"
             :type="collapsed ? 'menu-unfold' : 'menu-fold'"
-            @click="collapsed = !collapsed"
+            @click="toggleCollapsed"
           ></a-icon>
           <Header />
         </a-layout-header>
@@ -38,6 +43,7 @@ import Header from "./Header";
 import Footer from "./Footer";
 import SiderMenu from "./SiderMenu";
 import SettingDrawer from "../components/SettingDrawer";
+
 export default {
   name: "BasicLayout",
   components: { Header, Footer, SiderMenu, SettingDrawer },
@@ -52,7 +58,23 @@ export default {
   data() {
     return {
       collapsed: false,
+      tempOpenKeys: [],
     };
+  },
+  methods: {
+    toggleCollapsed() {
+      if (!this.collapsed) {
+        this.tempOpenKeys = this.$refs.siderMenu.openKeys;
+        this.$refs.siderMenu.openKeys = [];
+      } else {
+        this.$refs.siderMenu.openKeys = this.tempOpenKeys;
+      }
+      this.collapsed = !this.collapsed;
+    },
+    //监听openKeys变化 便于菜单栏收起展开时 还能继续显示打开的状态
+    openKeysChange(openkeys) {
+      this.tempOpenKeys = openkeys;
+    },
   },
 };
 </script>
@@ -62,16 +84,19 @@ export default {
   padding: 0 20px;
   line-height: 64px;
   font-size: 20px;
+
   &:hover {
     background-color: #eeeeee;
   }
 }
+
 .logo {
   height: 64px;
   line-height: 64px;
   text-align: center;
   overflow: hidden;
 }
+
 .nav-theme-dark /deep/ .logo {
   color: #fff;
 }
