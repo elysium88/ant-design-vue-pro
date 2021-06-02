@@ -19,6 +19,7 @@
       </a-layout-sider>
       <a-layout>
         <a-layout-header style="background: #fff; padding: 0">
+          <!--          v-auth 指令式权限控制-->
           <a-icon
             v-auth="['admin']"
             class="trigger"
@@ -35,6 +36,8 @@
         </a-layout-footer>
       </a-layout>
     </a-layout>
+
+    <!--函数式组件 权限控制-->
     <Authorized :authority="['admin']">
       <SettingDrawer />
     </Authorized>
