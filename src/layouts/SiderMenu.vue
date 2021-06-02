@@ -23,6 +23,7 @@
 
 <script>
 import SubMenu from "./SubMenu";
+import { check } from "../utils/auth";
 export default {
   props: {
     theme: {
@@ -59,10 +60,15 @@ export default {
     toggleCollapsed() {
       this.collapsed = !this.collapsed;
     },
+
     getMenuData(routes = [], parentKeys = [], selectedKey) {
       const menuData = [];
+      for (let item of routes) {
+        //没有权限不生成路由
+        if (item.meta && item.meta.authority && !check(item.meta.authority)) {
+          break;
+        }
 
-      routes.forEach((item) => {
         if (item.name && !item.hideInMenu) {
           this.openKeysMap[item.path] = parentKeys;
           this.selectedKeysMap[item.path] = [selectedKey || item.path];
@@ -91,7 +97,8 @@ export default {
             ...this.getMenuData(item.children, [...parentKeys, item.path])
           );
         }
-      });
+      }
+
       return menuData;
     },
   },
