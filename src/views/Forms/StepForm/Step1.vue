@@ -18,10 +18,29 @@
       </a-form-item>
 
       <a-form-item
-        label="付款账户"
+        label="收款账户"
         :label-col="formItemLayout.labelCol"
-        :wrapperCol="formItemLayout.wrapperCol"
+        :wrapper-Col="formItemLayout.wrapperCol"
       >
+        <!--        自定义表单组件-->
+        <receiver-account
+          v-decorator="[
+            'receiveAccount',
+            {
+              initialValue: step.receiveAccount,
+              rules: [
+                {
+                  required: true,
+                  message: '请输入收款账号',
+                  validator: checkReceiveAccount,
+                },
+              ],
+            },
+          ]"
+        ></receiver-account>
+      </a-form-item>
+
+      <a-form-item>
         <a-button type="primary" @click="handleSubmit">下一步</a-button>
       </a-form-item>
     </a-form>
@@ -29,8 +48,10 @@
 </template>
 
 <script>
+import ReceiverAccount from "../../../components/ReceiverAccount";
 export default {
   name: "Step1",
+  components: { ReceiverAccount },
   data() {
     return {
       form: this.$form.createForm(this),
@@ -49,6 +70,7 @@ export default {
     handleSubmit() {
       const { form, $router, $store } = this;
       form.validateFields((err, values) => {
+        console.log(err);
         if (!err) {
           $store.commit({
             type: "form/saveStepFormData",
@@ -57,6 +79,15 @@ export default {
           $router.push("/form/step-form/confirm");
         }
       });
+    },
+
+    checkReceiveAccount(rule, value, callback) {
+      console.log(value);
+      if (value && value.number) {
+        callback();
+        return;
+      }
+      callback(false);
     },
   },
 };
