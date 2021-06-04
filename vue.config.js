@@ -20,8 +20,35 @@ const options = {
 };
 
 const themePlugin = new AntDesignThemePlugin(options);
+const isProduction = process.env.NODE_ENV === "production";
 
+const assetsCDN = {
+  // webpack build externals
+  externals: {
+    vue: "Vue",
+    "vue-router": "VueRouter",
+    vuex: "Vuex",
+    axios: "axios",
+    "highlight.js": "highlight.js",
+  },
+  css: [],
+  // https://unpkg.com/browse/vue@2.6.10/
+  js: [
+    "//cdn.jsdelivr.net/npm/vue@2.6.11/dist/vue.min.js",
+    "//cdn.jsdelivr.net/npm/vue-router@3.2.0/dist/vue-router.min.js",
+    "//cdn.jsdelivr.net/npm/vuex@3.4.0/dist/vuex.min.js",
+    "//cdn.jsdelivr.net/npm/axios@0.21.1/dist/axios.min.js",
+    "//unpkg.com/@highlightjs/cdn-assets@11.0.1/highlight.min.js",
+  ],
+};
+function resolve(dir) {
+  return path.join(__dirname, dir);
+}
 module.exports = {
+  publicPath: "./",
+  outputDir: "dist",
+  assetsDir: "static",
+  productionSourceMap: !isProduction,
   css: {
     loaderOptions: {
       less: {
@@ -45,12 +72,14 @@ module.exports = {
         deleteOriginalAssets: false, //是否删除原文件
       }),
     ],
+    externals: isProduction ? assetsCDN.externals : {},
     resolve: {
       alias: {
         "@ant-design/icons/lib/dist$": path.resolve(
           __dirname,
           "./src/icons.js"
         ),
+        "@": resolve("src"),
       },
     },
   },
@@ -76,6 +105,7 @@ module.exports = {
       "/api": {
         target: "http://localhost:9000",
         bypass: function (req, res) {
+          console.log(process.env.NODE_ENV);
           if (req.headers.accept.indexOf("html") !== -1) {
             return "/index.html";
           } else if (process.env.MOCK !== "none") {
