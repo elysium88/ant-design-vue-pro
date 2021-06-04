@@ -8,6 +8,7 @@ import enUS from "../locale/enUS";
 //import 'ant-design-vue/dist/antd.less'
 import VueI18n from "vue-i18n";
 import queryString from "query-string";
+import VueHighlightJS from "vue-highlightjs";
 
 import {
   Button,
@@ -19,12 +20,13 @@ import {
   Form,
   Input,
   Select,
-  LocaleProvider,
   Dropdown,
   DatePicker,
+  ConfigProvider,
 } from "ant-design-vue";
 import Authorized from "./components/Authorized";
 import Auth from "./directive/auth";
+import "highlight.js/styles/github.css";
 
 Vue.config.productionTip = false;
 
@@ -40,7 +42,8 @@ Vue.use(Input);
 Vue.use(Select);
 Vue.use(Dropdown);
 Vue.use(DatePicker);
-Vue.use(LocaleProvider);
+Vue.use(ConfigProvider);
+Vue.use(VueHighlightJS);
 Vue.component("Authorized", Authorized); //权限控制组件
 Vue.use(VueI18n);
 

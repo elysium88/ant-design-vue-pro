@@ -2,7 +2,11 @@ function chart(method) {
   let res = null;
   switch (method) {
     case "GET":
-      res = [20, 40, 74, 12, 34, 34];
+      res = {
+        code: "0000",
+        data: [60, 70, 40, 10, 50, 60],
+        desc: "成功",
+      };
       break;
     default:
       res = null;

@@ -3,6 +3,10 @@
     {{ $t("message")["app.dashboard.analysis.timeLabel"] }}
     <a-date-picker></a-date-picker>
     <chart :option="chartOption" style="height: 400px"></chart>
+
+    <pre v-highlightjs="chartCode">
+      <code class="javascript"></code>
+    </pre>
   </div>
 </template>
 
@@ -10,6 +14,9 @@
 import request from "../../utils/request";
 //import random from "lodash/random";
 import Chart from "../../components/Chart";
+// 将文件转换成字符串raw-loader
+import chartCode from "!!raw-loader!../../components/Chart";
+
 export default {
   name: "Analysis",
 
@@ -28,13 +35,14 @@ export default {
     return {
       // 指定图表的配置项和数据
       chartOption: {},
+      chartCode: chartCode,
     };
   },
   methods: {
     getChartData() {
       request({
         //url: "/api/dashboard/chart",
-        url: "https://www.fastmock.site/mocka/7ae47df5ca44ce2596d4ed362376c969/test/dashboard/chart",
+        url: "/api/dashboard/chart",
         method: "get",
         params: { ID: 12345 },
       }).then((response) => {

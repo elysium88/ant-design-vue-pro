@@ -1,4 +1,6 @@
 const path = require("path");
+const webpack = require("webpack");
+const CompressionPlugin = require("compression-webpack-plugin");
 
 const AntDesignThemePlugin = require("antd-theme-webpack-plugin");
 
@@ -33,7 +35,24 @@ module.exports = {
     },
   },
   configureWebpack: {
-    plugins: [themePlugin],
+    plugins: [
+      themePlugin,
+      new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
+
+      new CompressionPlugin({
+        test: /\.js$|\.html$|\.css/, //匹配文件名
+        threshold: 10240, //对超过10k的数据进行压缩
+        deleteOriginalAssets: false, //是否删除原文件
+      }),
+    ],
+    resolve: {
+      alias: {
+        "@ant-design/icons/lib/dist$": path.resolve(
+          __dirname,
+          "./src/icons.js"
+        ),
+      },
+    },
   },
   chainWebpack: (config) => {
     const svgRule = config.module.rule("svg");
@@ -44,6 +63,12 @@ module.exports = {
 
     // 添加要替换的 loader
     svgRule.use("vue-svg-loader").loader("vue-svg-loader");
+
+    // config.plugin("define").tap((args) => {
+    //   args[0]["process.env"].MOCK = JSON.stringify(process.env.MOCK);
+    //   console.log(args);
+    //   return args;
+    // });
   },
   devServer: {
     port: 9000,
@@ -52,11 +77,9 @@ module.exports = {
         target: "http://localhost:9000",
         bypass: function (req, res) {
           if (req.headers.accept.indexOf("html") !== -1) {
-            console.log("Skipping proxy for browser request.");
             return "/index.html";
           } else if (process.env.MOCK !== "none") {
-            const name =
-              req.path || "".split("/api/")[1] || "".split("/").join("_");
+            const name = req.path.split("/api/")[1].split("/").join("_");
             const mock = require(`./mock/${name}`);
             const result = mock(req.method);
             delete require.cache[require.resolve(`./mock/${name}`)]; //删除缓存 每次都能拿到最新的数据
