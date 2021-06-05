@@ -54,7 +54,7 @@ const i18n = new VueI18n({
     enUS: { message: enUS },
   },
 });
-
+// 引入阿里icon
 const IconFont = Icon.createFromIconfontCN({
   scriptUrl: "//at.alicdn.com/t/font_1729906_jac8106wnf.js",
 });

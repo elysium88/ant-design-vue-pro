@@ -29,7 +29,7 @@ const assetsCDN = {
     "vue-router": "VueRouter",
     vuex: "Vuex",
     axios: "axios",
-    "highlight.js": "highlight.js",
+    "highlight.js": "hljs",
   },
   css: [],
   // https://unpkg.com/browse/vue@2.6.10/
@@ -45,7 +45,7 @@ function resolve(dir) {
   return path.join(__dirname, dir);
 }
 module.exports = {
-  publicPath: "./",
+  publicPath: "/", //相对路径 ('./'),相对路径的 publicPath 有一些使用上的限制,当使用基于 HTML5 history.pushState 的路由时
   outputDir: "dist",
   assetsDir: "static",
   productionSourceMap: !isProduction,
@@ -64,6 +64,7 @@ module.exports = {
   configureWebpack: {
     plugins: [
       themePlugin,
+      //moment组件按需引入https://github.com/vueComponent/ant-design-vue/issues/325
       new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
 
       new CompressionPlugin({
@@ -73,6 +74,7 @@ module.exports = {
       }),
     ],
     externals: isProduction ? assetsCDN.externals : {},
+    // antd icon图标按需加载 https://github.com/vueComponent/ant-design-vue/issues/325
     resolve: {
       alias: {
         "@ant-design/icons/lib/dist$": path.resolve(
@@ -98,6 +100,12 @@ module.exports = {
     //   console.log(args);
     //   return args;
     // });
+    if (isProduction) {
+      config.plugin("html").tap((args) => {
+        args[0].cdn = assetsCDN;
+        return args;
+      });
+    }
   },
   devServer: {
     port: 9000,
