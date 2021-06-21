@@ -9,7 +9,7 @@ export default {
       required: true,
     },
   },
-  functional: true,
+  functional: true, //函数式组件，无状态 (没有响应式数据)，也没有实例 (没有 this 上下文)
   render(createElement, context) {
     console.log(context);
     const { props, scopedSlots } = context;
